@@ -20,7 +20,7 @@ exports.getsignin = (req, res, next) => {
 }
 exports.postsignin = async (req, res, next) => {
 
-  console.log(req.body)
+  
   try {
     const password = req.body.password
     const email = req.body.email;

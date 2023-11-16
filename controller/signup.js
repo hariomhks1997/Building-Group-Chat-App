@@ -3,6 +3,7 @@ const rootdir = require("../util/path");
 const Signup = require("../model/signup");
 const bcrypt = require("bcrypt");
 const sequelize = require("../util/database");
+const { Op } = require('sequelize');
 
 exports.getsignup = (req, res, next) => {
   res.status(200).sendFile(path.join(rootdir, "views", "signup.html"));
@@ -15,7 +16,11 @@ exports.postsignup = async (req, res) => {
     const name = req.body.name;
     const mobile = req.body.mobile;
 
-    const user = await Signup.findOne({ where: { email} });
+    const user = await Signup.findOne({
+        where: {
+            [Op.or]: [{ email }, { mobile }]
+        }
+    });
     console.log(user)
     if (user) {
       return res.status(404).json({ message: "User already exists" });
@@ -46,7 +51,7 @@ exports.getpostsignup = async (req, res) => {
   console.log(req.body);
   try {
     const data = await Signup.findAll();
-    console.log(data);
+   
     let product = [];
 
     data.map((ele) => {

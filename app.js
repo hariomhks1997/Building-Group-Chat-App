@@ -2,6 +2,11 @@ const path=require("path")
 const express=require("express");
 const cors = require('cors');
 require('dotenv').config();
+
+const chatmessage = require('./model/chatapp');
+const signup = require('./model/signup')
+
+
 const signuproutes = require("./routes/signup")
 const signinroutes=require("./routes/signin")
 const chatapproutes=require("./routes/chatapp")
@@ -26,7 +31,8 @@ app.use(signuproutes)
 app.use(chatapproutes)
 
 
-
+signup.hasMany(chatmessage);
+chatmessage.belongsTo(signup,{constraints:true, onDelete:'CASCADE'}); 
 
 async function initiate(){
     try {
