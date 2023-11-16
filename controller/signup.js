@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const sequelize = require("../util/database");
 
 exports.getsignup = (req, res, next) => {
-  res.sendFile(path.join(rootdir, "views", "signup.html"));
+  res.status(200).sendFile(path.join(rootdir, "views", "signup.html"));
 };
 exports.postsignup = async (req, res) => {
     const t=await sequelize.transaction();
