@@ -1,0 +1,26 @@
+#header1{
+    display: flex;
+    justify-content: center;
+    background-color: azure;
+}
+#div1{
+    display: block;
+    height: 70vh;
+    background-color:blanchedalmond;
+}
+#div2{
+    display: flex;
+    justify-content: center;
+    margin-top: 1vw;
+    background-color: blue;
+    padding: 1vw;
+}
+#input1{
+   width: 40vw;
+}
+#button1{
+    background-color: lightcyan;
+    padding: 1vw;
+font-weight: bold;
+
+}

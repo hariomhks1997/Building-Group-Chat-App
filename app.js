@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const signuproutes = require("./routes/signup")
 const signinroutes=require("./routes/signin")
+const chatapproutes=require("./routes/chatapp")
 const PORT = process.env.PORT;
 const app=express();
 app.use(cors({
@@ -14,7 +15,7 @@ app.use(cors({
 
 const bodyParser=require("body-parser")
 const sequelize = require('./util/database');
-const { get } = require("http");
+
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({extended:false}))
 
 app.use(signinroutes)
 app.use(signuproutes)
+app.use(chatapproutes)
 
 
 

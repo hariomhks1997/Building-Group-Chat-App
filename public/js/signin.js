@@ -9,6 +9,7 @@ async function emailmatching(event) {
     const get = await axios.get(`signup/add-user`);
     for (var i = 0; i < get.data.length; i++) {
       checkvalidemail(get.data[i], value);
+      
     }
   } catch (err) {
     console.log(err);
@@ -29,8 +30,7 @@ async function signin(event) {
   event.preventDefault();
   const email = event.target.email.value;
   const password = event.target.password.value;
-  localStorage.setItem("noitempage",5)
-  localStorage.setItem("currentPage",1)
+  
   const obj = {
     email,
     password,
@@ -40,11 +40,14 @@ async function signin(event) {
     const post = await axios.post(`signin/add-user`, obj);
     console.log(post.data);
    alert(post.data.message)
-   // window.location.href="/expense"
+   window.location.href="/chatapp"
     localStorage.setItem("token",post.data.token)
+    // localStorage.setItem("login","true")
+    // localStorage.setItem("email",email)
   } catch (err) {
    alert(err.response.data.message)
    
     
   }
 }
+
