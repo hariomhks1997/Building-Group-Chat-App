@@ -10,12 +10,25 @@ exports.message=async (req,res,)=>{
     const message=req.body.message;
    console.log("request",user)
    try{
-    user.createMessage({
+    const data=await user.createMessage({
+        name:user.name,
         message:message
        })
-       res.status(201).json({message:"message send sucessfully"})
+       res.status(201).json({message:"message send sucessfully",data:data})
    }catch(err){
     res.status(400).json({message:"message send failed"})
    }
    
+}
+exports.getMessage=async (req,res)=>{
+   
+        try{
+            const data=await chatmessage.findAll()
+            console.log(data)
+               res.status(200).json({data:data})
+           }catch(err){
+            res.status(400).json({message:"message getting failed"})
+           }   
+  
+    
 }
