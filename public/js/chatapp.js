@@ -45,26 +45,56 @@ async function chatmessagerefresh() {
     });
     product = get.data.data;
     const getdata = get.data.data;
-    getdata.sort((a,b)=>a.id-b.id)
+    getdata.sort((a, b) => a.id - b.id);
     getdata.map((ele) => {
       const existingindex = item.findIndex((it) => it.id == ele.id);
 
       if (existingindex == -1) {
-        item.push({ id: ele.id, message: ele.message ,name:ele.name});
+        item.push({ id: ele.id, message: ele.message, name: ele.name });
         showmessageonscreen(ele);
       }
     });
-  } catch (err) {
-    
-  }
+  } catch (err) {}
 }
 async function showmessageonscreen(obj) {
-  const div = document.getElementById("div1");
-  const li = document.createElement("li");
-  li.append(document.createTextNode(obj.message+"    "+obj.name));
-  li.style.listStyle = "none";
-  div.appendChild(li);
-  div.scrollTop=div.scrollHeight
+  if (decodeToken.userId == obj.userId) {
+    const div1 = document.getElementById("div1");
+    const span = document.createElement("span");
+    span.style.display = "flex";
+    span.style.justifyContent = "right";
+   
+    const li = document.createElement("li");
+
+    li.append(document.createTextNode(obj.message ));
+    li.style.listStyle = "none";
+    li.style.width = "fit-content";
+    li.style.backgroundColor = "white";
+    li.style.padding = "2vw";
+    li.style.marginRight = "5vw";
+    li.style.marginBottom = "1vw";
+    span.appendChild(li);
+    div1.appendChild(span);
+    div1.scrollTop = div1.scrollHeight;
+  } else {
+    const div2 = document.getElementById("div1");
+    const span = document.createElement("span");
+    span.style.display = "flex";
+    span.style.justifyContent = "left";
+    
+    const li = document.createElement("li");
+
+    li.append(document.createTextNode(obj.message + " => by  " + obj.name));
+    li.style.listStyle = "none";
+    li.style.width = "fit-content";
+    li.style.backgroundColor = "violet";
+    li.style.padding = "2vw";
+    li.style.marginLeft = "5vw";
+    li.style.marginBottom = "1vw";
+    span.appendChild(li);
+    div2.appendChild(span);
+    div2.scrollTop = div2.scrollHeight;
+   
+  }
   
 }
 setInterval(async () => {
@@ -74,12 +104,11 @@ setInterval(async () => {
     });
 
     const getdata = get.data.data;
-for(var i=0;i<getdata.length;i++){
-  if(getdata[i].id!=product[i].id){
-    chatmessagerefresh();
-  }
-}
-   
+    for (var i = 0; i < getdata.length; i++) {
+      if (getdata[i].id != product[i].id || getdata.length!=product.length) {
+        chatmessagerefresh();
+      }
+    }
   } catch (err) {
     ///alert(err.response.data.message)
   }
