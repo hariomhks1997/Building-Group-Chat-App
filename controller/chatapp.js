@@ -8,7 +8,7 @@ exports.chatapp=async (req,res,)=>{
 exports.message=async (req,res,)=>{
     const user=req.user
     const message=req.body.message;
-   console.log("request",user)
+   
    try{
     const data=await user.createMessage({
         name:user.name,
@@ -23,8 +23,12 @@ exports.message=async (req,res,)=>{
 exports.getMessage=async (req,res)=>{
    
         try{
-            const data=await chatmessage.findAll()
-            console.log(data)
+            const data=await chatmessage.findAll({
+                attributes: ['id', 'name', 'userId','message'],
+          order: [['id', 'DESC']],
+          limit:25,
+            })
+           
                res.status(200).json({data:data})
            }catch(err){
             res.status(400).json({message:"message getting failed"})

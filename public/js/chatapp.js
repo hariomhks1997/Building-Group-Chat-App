@@ -45,7 +45,7 @@ async function chatmessagerefresh() {
     });
     product = get.data.data;
     const getdata = get.data.data;
-
+    getdata.sort((a,b)=>a.id-b.id)
     getdata.map((ele) => {
       const existingindex = item.findIndex((it) => it.id == ele.id);
 
@@ -64,6 +64,8 @@ async function showmessageonscreen(obj) {
   li.append(document.createTextNode(obj.message+"    "+obj.name));
   li.style.listStyle = "none";
   div.appendChild(li);
+  div.scrollTop=div.scrollHeight
+  
 }
 setInterval(async () => {
   try {
@@ -72,10 +74,12 @@ setInterval(async () => {
     });
 
     const getdata = get.data.data;
-
-    if (getdata.length != product.length) {
-      chatmessagerefresh();
-    }
+for(var i=0;i<getdata.length;i++){
+  if(getdata[i].id!=product[i].id){
+    chatmessagerefresh();
+  }
+}
+   
   } catch (err) {
     ///alert(err.response.data.message)
   }
