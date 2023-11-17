@@ -104,11 +104,20 @@ setInterval(async () => {
     });
 
     const getdata = get.data.data;
-    for (var i = 0; i < getdata.length; i++) {
-      if (getdata[i].id != product[i].id || getdata.length!=product.length) {
-        chatmessagerefresh();
+    
+    if(getdata.length!=product.length){
+      chatmessagerefresh();
+    }else{
+      for (var i = 0; i < getdata.length; i++) {
+        if (getdata[i].id != product[i].id ) {
+          chatmessagerefresh();
+          
+        }
       }
     }
+    
+    
+    
   } catch (err) {
     ///alert(err.response.data.message)
   }
