@@ -1,8 +1,14 @@
+
+
 const button = document.getElementById("button1");
-const token = localStorage.getItem("token");
+const token =  sessionStorage.getItem("token");
 const decodeToken = parseJwt(token);
+const create_groupBtn= document.getElementById("create_groupBtn");
+const user_list= document.getElementById("user_list");
+create_groupBtn.addEventListener('click', showingAllUser)
 button.addEventListener("click", showmessage);
 function parseJwt(token) {
+  
   var base64Url = token.split(".")[1];
   var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   var jsonPayload = decodeURIComponent(
@@ -20,29 +26,55 @@ function parseJwt(token) {
 async function showmessage(event) {
   event.preventDefault();
   const message = document.getElementById("input1").value;
+  const groupid = document.getElementById("groupchanger").value;
+  console.log(groupid)
   console.log(message);
+  
   try {
-    const post = await axios.post(
-      `message`,
-      {
-        message: message,
-      },
-      { headers: { Authorization: token } }
-    );
+    if(groupid==0){
+      console.log("0")
+      const post = await axios.post(
+        `common/message`,
+        {
+          message: message,
+          GroupId:groupid
+        },
+        { headers: { Authorization: token } }
+      );
+    }else{
+      console.log("1")
+      const post = await axios.post(
+        `message`,
+        {
+          message: message,
+          GroupId:groupid
+        },
+        { headers: { Authorization: token } }
+      );
+    }
+   
+    
   } catch (err) {
     alert(err.response.data.message);
   }
 }
 window.addEventListener("DOMContentLoaded", async function () {
-  chatmessagerefresh();
+ 
+  ShowGroup();
+  commonchatmessagerefresh()
 });
 let product;
 let item = [];
 async function chatmessagerefresh() {
+  
+  
+  const lastPart= document.getElementById("groupchanger").value;
+  console.log(lastPart)
   try {
-    const get = await axios.get(`getAllmessage`, {
+    const get = await axios.get(`getAllmessage/${lastPart}`, {
       headers: { Authorization: token },
     });
+     console.log(get)
     product = get.data.data;
     const getdata = get.data.data;
     getdata.sort((a, b) => a.id - b.id);
@@ -50,8 +82,44 @@ async function chatmessagerefresh() {
       const existingindex = item.findIndex((it) => it.id == ele.id);
 
       if (existingindex == -1) {
+        
         item.push({ id: ele.id, message: ele.message, name: ele.name });
-        showmessageonscreen(ele);
+        if(lastPart==ele.GroupId){
+          showmessageonscreen(ele);
+          
+        }
+         
+        
+      }
+    });
+  } catch (err) {}
+}
+let commonproduct;
+let commonitem = [];
+async function commonchatmessagerefresh() {
+  const id = document.getElementById("groupchanger").value;
+  try {
+    const get = await axios.get(`getcommon/message`, {
+      headers: { Authorization: token },
+    });
+    
+    commonproduct = get.data.data;
+    const getdata = get.data.data;
+    getdata.sort((a, b) => a.id - b.id);
+    getdata.map((ele) => {
+      const existingindex = commonitem.findIndex((it) => it.id == ele.id);
+
+      if (existingindex == -1) {
+        
+        
+        commonitem.push({ id: ele.id, message: ele.message, name: ele.name });
+        if(id==ele.GroupId){
+          
+          showmessageonscreen(ele);
+          
+        }
+         
+        
       }
     });
   } catch (err) {}
@@ -97,20 +165,24 @@ async function showmessageonscreen(obj) {
   }
   
 }
+
 setInterval(async () => {
+  const lastPart=document.getElementById("groupchanger").value
   try {
-    const get = await axios.get(`getAllmessage`, {
+    const get = await axios.get(`getAllmessage/${lastPart}`, {
       headers: { Authorization: token },
     });
 
     const getdata = get.data.data;
-    
+    getdata.sort((a, b) => a.id - b.id);
     if(getdata.length!=product.length){
       chatmessagerefresh();
+     
     }else{
       for (var i = 0; i < getdata.length; i++) {
         if (getdata[i].id != product[i].id ) {
           chatmessagerefresh();
+          
           
         }
       }
@@ -122,3 +194,229 @@ setInterval(async () => {
     ///alert(err.response.data.message)
   }
 }, 1000);
+
+  
+
+setInterval(async () => {
+  try {
+    const get = await axios.get(`getcommon/message`, {
+      headers: { Authorization: token },
+    });
+
+    const getdata = get.data.data;
+    getdata.sort((a, b) => a.id - b.id);
+    if(getdata.length!=commonproduct.length){
+      commonchatmessagerefresh()
+    console.log(getdata)
+    }else{
+      for (var i = 0; i < getdata.length; i++) {
+        if (getdata[i].id != commonproduct[i].id ) {
+          commonchatmessagerefresh()
+          console.log(getdata)
+          
+        }
+      }
+    }
+    
+    
+    
+  } catch (err) {
+    ///alert(err.response.data.message)
+  }
+}, 1000);
+
+ 
+  
+
+
+async function showingAllUser() {
+  try {
+      user_list.parentElement.classList.remove('d-none');
+      const usersResponse = await axios.get('signup/add-user');
+      
+      user_list.innerHTML = "";
+      let text = ""
+     
+      
+      usersResponse.data.forEach((user) => {
+        if(user.id!=decodeToken.userId )
+          text += `                                    
+      <li class="list-group-item  d-flex  justify-content-between">
+          <div class="d-flex  align-items-center justify-content-between">
+              <img src="https://picsum.photos/seed/${user.imageUrl}/200" alt="Profile Picture"
+                  class="rounded-circle me-3" style="width: 35px; height: 35px;">
+              <h6><strong class="mb-1">${user.name}</strong></h6>
+          </div>
+          <input type="checkbox" class="form-check-inline" name="users" value="${user.id}">
+      </li>`
+      })
+      user_list.innerHTML = text;
+
+
+  } catch (error) {
+      console.log(error);
+      alert(error.response.data.message);
+  }
+}
+
+document.getElementById("search_bar").onkeyup=async (e)=>{
+
+  const text = e.target.value.toLowerCase();
+  const items = user_list.querySelectorAll('li');
+  const usersArr = Array.from(items);
+  
+  usersArr.forEach(blockdisplay);
+ 
+  function blockdisplay(value) {
+    console.log(value)
+    
+      const userName = value.querySelector('h6').textContent;
+      
+      if (userName.toLowerCase().indexOf(text) != -1) {
+        
+          value.classList.add('d-flex');
+          value.style.display = 'block';
+      }
+      else {
+          value.classList.remove('d-flex');
+          value.style.display = 'none';
+      }
+  }
+}
+const editstatus=document.getElementById("edit_status")
+document.getElementById("model_submibtn").onclick=async (e)=>{
+ 
+  try {
+    if (create_group_form.checkValidity()) {
+        e.preventDefault();
+        const groupName = create_group_form.querySelector('#group_name').value;
+        const selectedUsers = Array.from(user_list.querySelectorAll('input[name="users"]:checked'))
+            .map(checkbox => checkbox.value);
+        const data = {
+            name: groupName,
+            membersNo: selectedUsers.length + 1,
+            membersIds: selectedUsers
+        }
+        console.log(data)
+        console.log(editstatus.value)
+        if (editstatus.value == "false") {
+          console.log(data)
+            await axios.post('user/create-group',  data,{ headers: { Authorization: token } },);
+            alert("Group successfully created")
+
+        } else {
+            // const groupId = modelElements.editStatus.value
+            // await axios.post(`user/update-group?groupId=${groupId}`, data);
+
+            // model_submibtn.innerHTML = "Create Group";
+            // model_heading.innerHTML = `Create new group`;
+            // modelElements.editStatus.value = "false"
+            // modal_closeBtn.classList.remove("d-none")
+            // alert("Group successfully updated")
+
+        }
+        // create_group_form.reset();
+        // $('#group_model').modal('hide');
+       ShowGroup();
+    } else {
+        alert('fill all details ')
+    }
+
+} catch (error) {
+    console.log(error);
+    alert(error.response.data.message);
+}
+
+}
+const group_body=document.getElementById("group_body")
+async function ShowGroup() {
+  group_body.innerHTML=""
+  try {
+      const groupsResponse = await axios(`get-mygroups`,{ headers: { Authorization: token } });
+      console.log(groupsResponse)
+      const { groups } = groupsResponse.data;
+      const button2=document.createElement("button")
+          button2.classList="list-group-item list-group-item-action py-2 "
+          button2.setAttribute("data-bs-toggle","list")
+         
+         
+          
+          button2.innerHTML=`<div class="d-flex w-100 align-items-center justify-content-between" id="0">
+          <img src="https://picsum.photos/seed/common/200" alt="Profile Picture" class="rounded-circle"
+              style="width: 50px; height: 50px;">
+          <strong class="mb-1">Common-group</strong>
+          <small>All Members</small>
+      </div>`
+      group_body.appendChild(button2);
+      button2.onclick=async (event)=>{
+        event.preventDefault()
+       
+       //window.location.href=`/chatapp`
+        document.getElementById("div1").innerHTML=""
+        document.getElementById("groupchanger").value=Number(0)
+        commonitem=[]
+        
+       
+        commonchatmessagerefresh()
+      }
+      // group_body.innerHTML = `
+      // <button class="list-group-item list-group-item-action py-2 
+      //     data-bs-toggle="list">
+      //     <div class="d-flex w-100 align-items-center justify-content-between" id="0">
+      //         <img src="https://picsum.photos/seed/common/200" alt="Profile Picture" class="rounded-circle"
+      //             style="width: 50px; height: 50px;">
+      //         <strong class="mb-1">Common-group</strong>
+      //         <small>All Members</small>
+      //     </div>
+      // </button>
+      // `
+      
+      groups.forEach((ele) => {
+          const date = new Date(ele.date);
+          const options = { year: 'numeric', month: 'short', day: 'numeric' };
+          const formattedDate = date.toLocaleString('en-US', options);
+          const button1=document.createElement("button")
+          button1.classList="list-group-item list-group-item-action py-2 "
+          button1.setAttribute("data-bs-toggle","list")
+          button1.setAttribute("value",`${ele.id}`)
+         
+          
+          button1.innerHTML=`<div class="d-flex w-100 align-items-center justify-content-between" id="${ele.id}">
+          <img src="https://picsum.photos/seed/${ele.id}/200" alt="Profile Picture" class="rounded-circle"
+              style="width: 50px; height: 50px;">
+          <strong class="mb-1">${ele.name}</strong>
+          <small>${ele.membersNo} Members</small>
+      </div>`
+      
+      //     html += `               
+      // <button class="list-group-item list-group-item-action py-2 " 
+      //     data-bs-toggle="list" id=${ele.id}>
+      //     <div class="d-flex w-100 align-items-center justify-content-between" id="${ele.id}">
+      //         <img src="https://picsum.photos/seed/${ele.id}/200" alt="Profile Picture" class="rounded-circle"
+      //             style="width: 50px; height: 50px;">
+      //         <strong class="mb-1">${ele.name}</strong>
+      //         <small>${ele.membersNo} Members</small>
+      //     </div>
+      // </button>`
+     
+      group_body.appendChild(button1);
+      button1.onclick=async (event)=>{
+        event.preventDefault()
+        document.getElementById("groupchanger").value=ele.id
+       // window.location.href=`/chatapp?GroupId=${ele.id}`
+        document.getElementById("div1").innerHTML=""
+       
+        item=[]
+        chatmessagerefresh()
+       
+
+      }
+      })
+      
+      
+  } catch (error) {
+      console.log(error);
+  }
+}
+
+

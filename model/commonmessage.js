@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const chatmessage = sequelize.define('message', {
+const commonmessage = sequelize.define('commonmessage', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -17,5 +17,4 @@ GroupId:Sequelize.INTEGER
   
 });
 
-module.exports = chatmessage;
- 
+module.exports = commonmessage;

@@ -43,16 +43,83 @@
           </div>
         </div>
       </nav>
-   <header id="header1">
-    <h1>Chat App</h1>
-   </header> 
-   <div id="div1" style="overflow-y:scroll;">
-
-   </div>
-   <div id="div2">
-    <input id="input1" name="message" type="text">
-    <button id="button1">Send</button>
-   </div>
+      
+      <div style="display: flex;;">
+         <!-- <43543> -->
+        <div style="padding: 1vw;width: 25%;">
+          <header style="text-align: center;background-color: cornflowerblue;padding: 1vw;">
+            <button  class="btn btn-light form-control bg-dark text-white " data-bs-toggle="modal"
+            data-bs-target="#group_model" aria-controls="group_model" id="create_groupBtn">Create new group</button>
+          </header>
+          <div class="list-group overflow-y-scroll" style="height: 80vh;" id="group_body">
+          </div>
+          
+        </div>
+        
+       
+           <!-- <gg> -->
+        <div style="width: 75%;">
+          <header id="header1">
+            <h1>Chat App</h1>
+           </header> 
+           <div id="div1" style="overflow-y:scroll;">
+        
+           </div>
+           <div id="div2">
+            <input id="input1" name="message" type="text">
+            <button id="button1">Send</button>
+           </div>
+        </div>
+        <!-- <> -->
+        <div class="modal fade " data-bs-backdrop="static"  id="group_model">
+          
+          <div class="modal-dialog modal-dialog-centered ">
+           
+              <div class="modal-content">
+               
+                  <div class="modal-header d-flex justify-content-center">
+                      <h1 class="modal-title fs-5" id="model_heading">Create new group </h1>
+                  </div>
+                  <div class="modal-body">
+                      <form id="create_group_form">
+                          <div class="mb3">
+                              <label for="members" class="col-form-label" >Group Name:</label>
+                              <input type="text" class="form-control" placeholder="Eg:Family Group etc" name="group_name" id="group_name"
+                                  required>
+  
+                          </div>
+                          <div class="mb-3">
+                              <label for="members" class="col-form-label">Group Members:</label>
+                              <input type="text" class="form-control" name="search_bar" placeholder="Search..." id="search_bar">
+  
+                              <div class="card mt-2 d-none">
+                                  <ul class="list-group overflow-y-scroll" id="user_list" style="max-height: 30vh;">
+                                  </ul>
+                              </div>
+  
+                          </div>
+                          <div class="mb-3">
+                              <label for="group-description" class="col-form-label">Group description:</label>
+                              <textarea class="form-control" name="group_description" id="group_description" >You can leave this column</textarea>
+                          </div>
+                          <input type="hidden" class="form-control" name="edit_status" value="false" id="edit_status">
+                          <input type="hidden" value="0" id="groupchanger">
+                          
+                      </form>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modal_closeBtn">Close</button>
+                      <button type="button" class="btn btn-primary" id="model_submibtn">Create Group</button>
+                  </div>
+  
+              </div>
+          </div>
+      </div>
+     
+      </div>
+      
+   
+   
    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
    <script src="/js/chatapp.js"></script>
 </body>

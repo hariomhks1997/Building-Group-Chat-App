@@ -55,7 +55,7 @@ exports.getpostsignup = async (req, res) => {
     let product = [];
 
     data.map((ele) => {
-      product.push({ email: ele.email, id: ele.id });
+      product.push({ email: ele.email, id: ele.id ,name:ele.name});
     });
     res.status(200).json(product);
   } catch (err) {

@@ -41,9 +41,9 @@ async function signin(event) {
     console.log(post.data);
    alert(post.data.message)
    window.location.href="/chatapp"
-    localStorage.setItem("token",post.data.token)
-    // localStorage.setItem("login","true")
-    // localStorage.setItem("email",email)
+     sessionStorage.setItem("token",post.data.token)
+    //  sessionStorage.setItem("login","true")
+    //  sessionStorage.setItem("email",email)
   } catch (err) {
    alert(err.response.data.message)
    
