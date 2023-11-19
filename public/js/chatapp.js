@@ -59,8 +59,9 @@ async function showmessage(event) {
   }
 }
 window.addEventListener("DOMContentLoaded", async function () {
- 
+ document.getElementById("groupname").innerHTML="Commom-Group-Chat"
  showcommongroup()
+ showcreatedgroup()
   //ShowGroup();
   commonchatmessagerefresh()
 });
@@ -368,6 +369,7 @@ async function showcreatedgroup(){
     group_body.appendChild(button1);
     button1.onclick=async (event)=>{
       event.preventDefault()
+      document.getElementById("groupname").innerHTML=`${ele.name}-Chat`
       document.getElementById("groupchanger").value=ele.id
      // window.location.href=`/chatapp?GroupId=${ele.id}`
       document.getElementById("div1").innerHTML=""
@@ -404,7 +406,7 @@ button2.innerHTML=`<div class="d-flex w-100 align-items-center justify-content-b
 group_body.appendChild(button2);
 button2.onclick=async (event)=>{
 event.preventDefault()
-
+document.getElementById("groupname").innerHTML="Commom-Group-Chat"
 //window.location.href=`/chatapp`
 document.getElementById("div1").innerHTML=""
 document.getElementById("groupchanger").value=Number(0)
