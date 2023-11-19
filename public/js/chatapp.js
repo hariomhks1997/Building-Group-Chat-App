@@ -60,7 +60,8 @@ async function showmessage(event) {
 }
 window.addEventListener("DOMContentLoaded", async function () {
  
-  ShowGroup();
+ showcommongroup()
+  //ShowGroup();
   commonchatmessagerefresh()
 });
 let product;
@@ -97,6 +98,7 @@ async function chatmessagerefresh() {
 let commonproduct;
 let commonitem = [];
 async function commonchatmessagerefresh() {
+  console.log("common")
   const id = document.getElementById("groupchanger").value;
   try {
     const get = await axios.get(`getcommon/message`, {
@@ -317,7 +319,7 @@ document.getElementById("model_submibtn").onclick=async (e)=>{
         }
         // create_group_form.reset();
         // $('#group_model').modal('hide');
-       ShowGroup();
+       //ShowGroup();
     } else {
         alert('fill all details ')
     }
@@ -328,95 +330,116 @@ document.getElementById("model_submibtn").onclick=async (e)=>{
 }
 
 }
-const group_body=document.getElementById("group_body")
-async function ShowGroup() {
-  group_body.innerHTML=""
-  try {
-      const groupsResponse = await axios(`get-mygroups`,{ headers: { Authorization: token } });
-      console.log(groupsResponse)
-      const { groups } = groupsResponse.data;
-      const button2=document.createElement("button")
-          button2.classList="list-group-item list-group-item-action py-2 "
-          button2.setAttribute("data-bs-toggle","list")
-         
-         
-          
-          button2.innerHTML=`<div class="d-flex w-100 align-items-center justify-content-between" id="0">
-          <img src="https://picsum.photos/seed/common/200" alt="Profile Picture" class="rounded-circle"
-              style="width: 50px; height: 50px;">
-          <strong class="mb-1">Common-group</strong>
-          <small>All Members</small>
-      </div>`
-      group_body.appendChild(button2);
-      button2.onclick=async (event)=>{
-        event.preventDefault()
+
+let createdgroup;
+const created=[]
+async function showcreatedgroup(){
+  const group_body=document.getElementById("group_body")
+  
+  try{
+    const groupsResponse = await axios(`get-mygroups`,{ headers: { Authorization: token } });
+   
+    const { groups } = groupsResponse.data;
+    createdgroup=groups
+    groups.forEach((ele) => {
+      const existingindex=created.findIndex((it)=>it.id==ele.id)
+    
+      if(existingindex==-1){
+        created.push({id:ele.id})
        
-       //window.location.href=`/chatapp`
-        document.getElementById("div1").innerHTML=""
-        document.getElementById("groupchanger").value=Number(0)
-        commonitem=[]
+        const date = new Date(ele.date);
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        const formattedDate = date.toLocaleString('en-US', options);
+        const button1=document.createElement("button")
+        button1.classList="list-group-item list-group-item-action py-2 "
+        button1.setAttribute("data-bs-toggle","list")
+        button1.setAttribute("value",`${ele.id}`)
+       
         
-       
-        commonchatmessagerefresh()
-      }
-      // group_body.innerHTML = `
-      // <button class="list-group-item list-group-item-action py-2 
-      //     data-bs-toggle="list">
-      //     <div class="d-flex w-100 align-items-center justify-content-between" id="0">
-      //         <img src="https://picsum.photos/seed/common/200" alt="Profile Picture" class="rounded-circle"
-      //             style="width: 50px; height: 50px;">
-      //         <strong class="mb-1">Common-group</strong>
-      //         <small>All Members</small>
-      //     </div>
-      // </button>
-      // `
-      
-      groups.forEach((ele) => {
-          const date = new Date(ele.date);
-          const options = { year: 'numeric', month: 'short', day: 'numeric' };
-          const formattedDate = date.toLocaleString('en-US', options);
-          const button1=document.createElement("button")
-          button1.classList="list-group-item list-group-item-action py-2 "
-          button1.setAttribute("data-bs-toggle","list")
-          button1.setAttribute("value",`${ele.id}`)
-         
-          
-          button1.innerHTML=`<div class="d-flex w-100 align-items-center justify-content-between" id="${ele.id}">
-          <img src="https://picsum.photos/seed/${ele.id}/200" alt="Profile Picture" class="rounded-circle"
-              style="width: 50px; height: 50px;">
-          <strong class="mb-1">${ele.name}</strong>
-          <small>${ele.membersNo} Members</small>
-      </div>`
-      
-      //     html += `               
-      // <button class="list-group-item list-group-item-action py-2 " 
-      //     data-bs-toggle="list" id=${ele.id}>
-      //     <div class="d-flex w-100 align-items-center justify-content-between" id="${ele.id}">
-      //         <img src="https://picsum.photos/seed/${ele.id}/200" alt="Profile Picture" class="rounded-circle"
-      //             style="width: 50px; height: 50px;">
-      //         <strong class="mb-1">${ele.name}</strong>
-      //         <small>${ele.membersNo} Members</small>
-      //     </div>
-      // </button>`
+        button1.innerHTML=`<div class="d-flex w-100 align-items-center justify-content-between" id="${ele.id}">
+        <img src="https://picsum.photos/seed/${ele.id}/200" alt="Profile Picture" class="rounded-circle"
+            style="width: 50px; height: 50px;">
+        <strong class="mb-1">${ele.name}</strong>
+        <small>${ele.membersNo} Members</small>
+    </div>`
+    
+    
+   
+    group_body.appendChild(button1);
+    button1.onclick=async (event)=>{
+      event.preventDefault()
+      document.getElementById("groupchanger").value=ele.id
+     // window.location.href=`/chatapp?GroupId=${ele.id}`
+      document.getElementById("div1").innerHTML=""
      
-      group_body.appendChild(button1);
-      button1.onclick=async (event)=>{
-        event.preventDefault()
-        document.getElementById("groupchanger").value=ele.id
-       // window.location.href=`/chatapp?GroupId=${ele.id}`
-        document.getElementById("div1").innerHTML=""
-       
-        item=[]
-        chatmessagerefresh()
-       
-
+      item=[]
+      chatmessagerefresh()
+     
+  
+    }
       }
-      })
       
-      
-  } catch (error) {
-      console.log(error);
-  }
-}
+  })
+  
+  }catch(err){
 
+  }
+
+}
+async function showcommongroup(){
+const group_body=document.getElementById("group_body")
+group_body.innerHTML=""
+const button2=document.createElement("button")
+button2.classList="list-group-item list-group-item-action py-2 "
+button2.setAttribute("data-bs-toggle","list")
+
+
+
+button2.innerHTML=`<div class="d-flex w-100 align-items-center justify-content-between" id="0">
+<img src="https://picsum.photos/seed/common/200" alt="Profile Picture" class="rounded-circle"
+    style="width: 50px; height: 50px;">
+<strong class="mb-1">Common-group</strong>
+<small>All Members</small>
+</div>`
+group_body.appendChild(button2);
+button2.onclick=async (event)=>{
+event.preventDefault()
+
+//window.location.href=`/chatapp`
+document.getElementById("div1").innerHTML=""
+document.getElementById("groupchanger").value=Number(0)
+commonitem=[]
+
+
+commonchatmessagerefresh()
+}
+}
+setInterval(async () => {
+  try {
+    const get = await axios.get(`get-mygroups`, {
+      headers: { Authorization: token },
+    });
+
+    const getdata = get.data.groups;
+   
+    if(getdata.length!=createdgroup.length){
+      showcreatedgroup()
+      
+   
+    }else{
+      for (var i = 0; i < getdata.length; i++) {
+        if (getdata[i].id != createdgroup[i].id ) {
+          showcreatedgroup()
+          
+          
+        }
+      }
+    }
+    
+    
+    
+  } catch (err) {
+    ///alert(err.response.data.message)
+  }
+}, 1000);
 
