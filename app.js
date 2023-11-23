@@ -1,5 +1,7 @@
 const path=require("path")
+const http=require("http")
 const express=require("express");
+const { Server } = require("socket.io");
 const cors = require('cors');
 require('dotenv').config();
 
@@ -15,6 +17,16 @@ const signinroutes=require("./routes/signin")
 const chatapproutes=require("./routes/chatapp")
 const PORT = process.env.PORT;
 const app=express();
+
+const server=http.createServer(app)
+const io=new Server(server)
+io.on('connection', (socket) => {
+    console.log('a user connected',socket.id);
+    socket.on("usermessage",(message)=>{
+        console.log(message)
+        io.emit("message",message)
+    })
+  });
 app.use(cors({
     origin:process.env.WEBSITE,
     credentials:true,
@@ -47,7 +59,7 @@ chatmessage.belongsTo(Group,{constraints:true, onDelete:'CASCADE'});
 async function initiate(){
     try {
         await sequelize.sync();
-        app.listen(PORT,()=>{
+        server.listen(PORT,()=>{
             console.log(`Server is running at ${PORT}`);
         });       
     } catch (error) {

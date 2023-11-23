@@ -1,4 +1,9 @@
-
+const socket=io();
+socket.on("message",(message)=>{
+  showgroupwisemessage()
+showcommonmessage() 
+showgroups()
+})
 
 const button = document.getElementById("button1");
 const token = sessionStorage.getItem("token");
@@ -52,7 +57,7 @@ async function showmessage(event) {
         { headers: { Authorization: token } }
       );
     }
-
+    socket.emit("usermessage",Math.random().toString())
 
   } catch (err) {
     alert(err.response.data.message);
@@ -169,7 +174,7 @@ async function showmessageonscreen(obj) {
 
 }
 
-setInterval(async () => {
+async function showgroupwisemessage() {
   const lastPart = document.getElementById("groupchanger").value
   try {
     const get = await axios.get(`getAllmessage/${lastPart}`, {
@@ -196,11 +201,11 @@ setInterval(async () => {
   } catch (err) {
     ///alert(err.response.data.message)
   }
-}, 1000);
+}
 
 
 
-setInterval(async () => {
+async function showcommonmessage() {
   try {
     const get = await axios.get(`getcommon/message`, {
       headers: { Authorization: token },
@@ -226,7 +231,7 @@ setInterval(async () => {
   } catch (err) {
     ///alert(err.response.data.message)
   }
-}, 1000);
+}
 
 async function showingEditUser(data) {
   const groupmember = data.map((ele) => ele.id)
@@ -418,7 +423,7 @@ document.getElementById("model_submibtn").onclick = async (e) => {
     } else {
       alert('fill all details ')
     }
-
+    socket.emit("usermessage",Math.random().toString())
   } catch (error) {
     console.log(error);
     alert(error.response.data.message);
@@ -442,7 +447,7 @@ async function showcreatedgroup() {
       const existingindex = created.findIndex((it) => it.id == ele.id)
 
       if (existingindex == -1) {
-        created.push({ id: ele.id })
+        created.push({ id: ele.id,membersNo:ele.membersNo,name:ele.name })
 
         const date = new Date(ele.date);
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -575,13 +580,14 @@ async function showcommongroup() {
     commonchatmessagerefresh()
   }
 }
-setInterval(async () => {
+async function showgroups(){
   try {
     const get = await axios.get(`get-mygroups`, {
       headers: { Authorization: token },
     });
 
     const getdata = get.data.groups;
+    console.log(getdata)
 
     if (getdata.length != createdgroup.length) {
       showcreatedgroup()
@@ -589,9 +595,11 @@ setInterval(async () => {
 
     } else {
       for (var i = 0; i < getdata.length; i++) {
-        if (getdata[i].id != createdgroup[i].id) {
+        if (getdata[i].id != createdgroup[i].id || getdata[i].name!=createdgroup[i].name || getdata[i].membersNo
+          !=createdgroup[i].membersNo
+          ) {
           showcreatedgroup()
-
+console.log("name,member")
 
         }
       }
@@ -602,4 +610,4 @@ setInterval(async () => {
   } catch (err) {
     ///alert(err.response.data.message)
   }
-}, 1000);
+}
