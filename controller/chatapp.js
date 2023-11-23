@@ -14,7 +14,7 @@ exports.message=async (req,res,)=>{
     const user=req.user
     const message=req.body.message;
     const GroupId=req.body.GroupId;
-    console.log(req.body)
+   
    
    try{
     const data=await user.createMessage({
@@ -33,7 +33,7 @@ exports.message=async (req,res,)=>{
 exports.getMessage=async (req,res)=>{
     
     const groupid=req.params.productid
-    console.log(groupid)
+   
         try{
             const data=await chatmessage.findAll({
                 attributes: ['id', 'name', 'userId','message','GroupId'],
@@ -112,14 +112,73 @@ exports.createGroup = async (request, response, next) => {
         return response.status(500).json({ message: 'Internal Server error!' })
     }
 }
+exports.updateGroup = async (request, response, next) => {
+    console.log(request.body)
+    try {
+        const user = request.user;
+        const { groupId } = request.query;
+        const group = await Group.findOne({ where: { id: Number(groupId) } });
+        const { name, membersNo, membersIds } = request.body;
+        const updatedGroup = await group.update({
+            name,
+            membersNo,
+            AdminId: user.id
+        })
+        membersIds.push(user.id);
+        await updatedGroup.setUsers(null);
+        await updatedGroup.addUsers(membersIds.map((ele) => {
+            return Number(ele)
+        }));
+        return response.status(200).json({ updatedGroup, message: "Group is succesfylly updated" })
+
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({ message: 'Internal Server error!' })
+    }
+}
+
 
 exports.getMygroups = async (request, response, next) => {
     try {
         const user = request.user;
         const groups = await user.getGroups();
-        console.log(groups)
+       
         return response.status(200).json({ groups, message: "All groups succesfully fetched" })
 
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({ message: 'Internal Server error!' })
+    }
+}
+exports.getGroupMembersbyId = async (request, response, next) => {
+   
+    try {
+        const { groupId } = request.query;
+        console.log("23",groupId)
+        const group = await Group.findOne({ where: { id: Number(groupId) } });
+        const AllusersData = await group.getUsers();
+        const users = AllusersData.map((ele) => {
+            return {
+                id: ele.id,
+                name: ele.name,
+            }
+        })
+
+        response.status(200).json({ users, message: "Group members name succesfully fetched" })
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({ message: 'Internal Server error!' })
+    }
+}
+exports.deleteGroupbyId = async (request, response, next) => {
+   
+    try {
+        const { groupId } = request.query;
+        console.log("23",groupId)
+        const group = await Group.findOne({ where: { id: Number(groupId) } });
+        group.destroy()
+      
+        response.status(200).json({  message: "Group deleted " })
     } catch (error) {
         console.log(error);
         return response.status(500).json({ message: 'Internal Server error!' })
