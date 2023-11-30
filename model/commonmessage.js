@@ -9,6 +9,10 @@ const commonmessage = sequelize.define('commonmessage', {
     allowNull: false,
     primaryKey: true
   },
+  isImage:{
+    type : Sequelize.BOOLEAN , 
+  defaultValue : false
+},
   name:Sequelize.STRING,
 message:Sequelize.STRING,
 GroupId:Sequelize.INTEGER

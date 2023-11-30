@@ -4,6 +4,20 @@ socket.on("message",(message)=>{
 showcommonmessage() 
 showgroups()
 })
+const flexSwitch=document.getElementById("flexSwitch")
+const flexInput=document.getElementById("input1")
+const flexLabel=document.getElementById("flexLabel")
+flexSwitch.addEventListener('change',()=>{
+  if(flexLabel.innerText === "text"){
+      flexLabel.innerText = "image";
+      flexInput.setAttribute('accept','image/*');
+      flexInput.type="file"
+  }else{
+      flexLabel.innerText = "text"
+  flexInput.removeAttribute('accept');
+      flexInput.type="text"
+  }
+})
 
 const button = document.getElementById("button1");
 const token = sessionStorage.getItem("token");
@@ -30,7 +44,7 @@ function parseJwt(token) {
 }
 async function showmessage(event) {
   event.preventDefault();
-  const message = document.getElementById("input1").value;
+  const message = document.getElementById("input1");
   const groupid = document.getElementById("groupchanger").value;
   console.log(groupid)
   console.log(message);
@@ -38,24 +52,51 @@ async function showmessage(event) {
   try {
     if (groupid == 0) {
       console.log("0")
+    if(flexLabel.innerText === "text"){
       const post = await axios.post(
         `common/message`,
         {
-          message: message,
+          message: message.value,
           GroupId: groupid
         },
         { headers: { Authorization: token } }
       );
+    }else{
+      const file = message.files[0]
+      console.log(file)
+                if (file && file.type.startsWith('image/')){
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('GroupId',groupid)
+                    const imageResponse = await axios.post('post-image',formData, { headers: { Authorization: token }})
+                }else{
+                    alert('Please select a valid image file.');
+                }              
+    }
+     
     } else {
-      console.log("1")
-      const post = await axios.post(
-        `message`,
-        {
-          message: message,
-          GroupId: groupid
-        },
-        { headers: { Authorization: token } }
-      );
+      if(flexLabel.innerText === "text"){
+        const post = await axios.post(
+          `message`,
+          {
+            message: message.value,
+            GroupId: groupid
+          },
+          { headers: { Authorization: token } }
+        );
+      }else{
+        const file =message.files[0]
+        if (file && file.type.startsWith('image/')){
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('GroupId',groupid)
+            const imageResponse = await axios.post('post-image',formData, { headers: { Authorization: token }})
+        }else{
+            alert('Please select a valid image file.');
+        }         
+      }
+      
+      
     }
     socket.emit("usermessage",Math.random().toString())
 
@@ -90,7 +131,7 @@ async function chatmessagerefresh() {
 
       if (existingindex == -1) {
 
-        item.push({ id: ele.id, message: ele.message, name: ele.name });
+        item.push({ id: ele.id, message: ele.message, name: ele.name,isImage:ele.isImage });
         if (lastPart == ele.GroupId) {
           showmessageonscreen(ele);
 
@@ -120,7 +161,7 @@ async function commonchatmessagerefresh() {
       if (existingindex == -1) {
 
 
-        commonitem.push({ id: ele.id, message: ele.message, name: ele.name });
+        commonitem.push({ id: ele.id, message: ele.message, name: ele.name ,isImage:ele.isImage});
         if (id == ele.GroupId) {
 
           showmessageonscreen(ele);
@@ -134,42 +175,98 @@ async function commonchatmessagerefresh() {
 }
 async function showmessageonscreen(obj) {
   if (decodeToken.userId == obj.userId) {
-    const div1 = document.getElementById("div1");
-    const span = document.createElement("span");
-    span.style.display = "flex";
-    span.style.justifyContent = "right";
-
-    const li = document.createElement("li");
-
-    li.append(document.createTextNode(obj.message));
-    li.style.listStyle = "none";
-    li.style.width = "fit-content";
-    li.style.backgroundColor = "white";
-    li.style.padding = "2vw";
-    li.style.marginRight = "5vw";
-    li.style.marginBottom = "1vw";
-    span.appendChild(li);
-    div1.appendChild(span);
-    div1.scrollTop = div1.scrollHeight;
+    if(obj.isImage==false){
+      const div1 = document.getElementById("div1");
+      const span = document.createElement("span");
+      span.style.display = "flex";
+      span.style.justifyContent = "right";
+  
+      const li = document.createElement("li");
+  
+      li.append(document.createTextNode(obj.message));
+      li.style.listStyle = "none";
+      li.style.width = "fit-content";
+      li.style.backgroundColor = "white";
+      li.style.padding = "2vw";
+      li.style.marginRight = "5vw";
+      li.style.marginBottom = "1vw";
+      span.appendChild(li);
+      div1.appendChild(span);
+      div1.scrollTop = div1.scrollHeight;
+    }else{
+      
+      const div1 = document.getElementById("div1");
+      const span = document.createElement("span");
+      span.style.display = "flex";
+      span.style.justifyContent = "right";
+  
+      const li = document.createElement("li");
+      const a=document.createElement("a")
+      a.setAttribute("href",obj.message),
+      a.setAttribute("target","_blank")
+      const img=document.createElement("img")
+      img.setAttribute("src",obj.message)
+      img.setAttribute("style","width: 7vw")
+      a.appendChild(img)
+      li.appendChild(a);
+      li.style.listStyle = "none";
+      li.style.width = "fit-content";
+      li.style.backgroundColor = "white";
+      li.style.padding = "2vw";
+      li.style.marginRight = "5vw";
+      li.style.marginBottom = "1vw";
+      span.appendChild(li);
+      div1.appendChild(span);
+      div1.scrollTop = div1.scrollHeight;
+    }
+   
   } else {
-    const div2 = document.getElementById("div1");
-    const span = document.createElement("span");
-    span.style.display = "flex";
-    span.style.justifyContent = "left";
-
-    const li = document.createElement("li");
-
-    li.append(document.createTextNode(obj.message + " => by  " + obj.name));
-    li.style.listStyle = "none";
-    li.style.width = "fit-content";
-    li.style.backgroundColor = "violet";
-    li.style.padding = "2vw";
-    li.style.marginLeft = "5vw";
-    li.style.marginBottom = "1vw";
-    span.appendChild(li);
-    div2.appendChild(span);
-    div2.scrollTop = div2.scrollHeight;
-
+    if(obj.isImage==false){
+      console.log(obj.isImage)
+      const div2 = document.getElementById("div1");
+      const span = document.createElement("span");
+      span.style.display = "flex";
+      span.style.justifyContent = "left";
+  
+      const li = document.createElement("li");
+  
+      li.append(document.createTextNode(obj.message + " => by  " + obj.name));
+      li.style.listStyle = "none";
+      li.style.width = "fit-content";
+      li.style.backgroundColor = "violet";
+      li.style.padding = "2vw";
+      li.style.marginLeft = "5vw";
+      li.style.marginBottom = "1vw";
+      span.appendChild(li);
+      div2.appendChild(span);
+      div2.scrollTop = div2.scrollHeight;
+    }else{
+      
+      const div2 = document.getElementById("div1");
+      const span = document.createElement("span");
+      span.style.display = "flex";
+      span.style.justifyContent = "left";
+  
+      const li = document.createElement("li");
+      const a=document.createElement("a")
+      a.setAttribute("href",obj.message),
+      a.setAttribute("target","_blank")
+      const img=document.createElement("img")
+      img.setAttribute("src",obj.message)
+      img.setAttribute("style","width: 7vw")
+      a.appendChild(img)
+      li.appendChild(a);
+      li.style.listStyle = "none";
+      li.style.width = "fit-content";
+      li.style.backgroundColor = "violet";
+      li.style.padding = "2vw";
+      li.style.marginLeft = "5vw";
+      li.style.marginBottom = "1vw";
+      span.appendChild(li);
+      div2.appendChild(span);
+      div2.scrollTop = div2.scrollHeight;
+    }
+    
   }
 
 }

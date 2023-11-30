@@ -9,6 +9,10 @@ const chatmessage = sequelize.define('message', {
     allowNull: false,
     primaryKey: true
   },
+  isImage:{
+    type : Sequelize.BOOLEAN , 
+  defaultValue : false
+},
   name:Sequelize.STRING,
 message:Sequelize.STRING,
 GroupId:Sequelize.INTEGER

@@ -3,7 +3,7 @@ const rootdir = require("../util/path")
 const chatmessage = require("../model/chatapp")
 const Group = require('../model/group')
 const common=require("../model/commonmessage")
-
+const awsservices=require("../services/awservices")
 
 
 
@@ -36,7 +36,7 @@ exports.getMessage=async (req,res)=>{
    
         try{
             const data=await chatmessage.findAll({
-                attributes: ['id', 'name', 'userId','message','GroupId'],
+                attributes: ['id', 'name', 'userId','message','GroupId','isImage'],
           order: [['id', 'DESC']],
           where: {
             GroupId: Number(groupid),
@@ -76,7 +76,7 @@ exports.getcommonmessage=async (req,res)=>{
    
     try{
         const data=await common.findAll({
-            attributes: ['id', 'name', 'userId','message','GroupId'],
+            attributes: ['id', 'name', 'userId','message','GroupId','isImage'],
       order: [['id', 'DESC']],
       limit:25,
         })
@@ -179,6 +179,40 @@ exports.deleteGroupbyId = async (request, response, next) => {
         group.destroy()
       
         response.status(200).json({  message: "Group deleted " })
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({ message: 'Internal Server error!' })
+    }
+}
+exports.saveChatImages = async (request, response, next) => {
+    try {
+        const user = request.user;
+        const image = request.file;
+        const { GroupId } = request.body;
+        const filename = `chat-images/group${GroupId}/user${user.id}/${Date.now()}_${image.originalname}`;
+        const imageUrl = await awsservices.uploadToS3(image.buffer, filename)
+        console.log("4",imageUrl)
+        if (GroupId == 0) {
+            await user.createCommonmessage({
+                name:user.name,
+               
+                GroupId:GroupId,
+                message: imageUrl,
+                isImage: true
+            })
+        } else {
+            await user.createMessage({
+                name:user.name,
+        message:imageUrl,
+        GroupId:GroupId,
+        isImage: true
+
+
+            })
+        }
+
+        return response.status(200).json({ message: "image saved to database succesfully" })
+
     } catch (error) {
         console.log(error);
         return response.status(500).json({ message: 'Internal Server error!' })
