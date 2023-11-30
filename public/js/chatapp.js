@@ -181,41 +181,46 @@ async function showmessageonscreen(obj) {
       span.style.display = "flex";
       span.style.justifyContent = "right";
   
-      const li = document.createElement("li");
-  
-      li.append(document.createTextNode(obj.message));
-      li.style.listStyle = "none";
-      li.style.width = "fit-content";
-      li.style.backgroundColor = "white";
-      li.style.padding = "2vw";
-      li.style.marginRight = "5vw";
-      li.style.marginBottom = "1vw";
-      span.appendChild(li);
+      const li1 = document.createElement("li");
+  li1.innerHTML=`<div class="card" style="width:18rem;">
+  <div class="card-body" >
+    
+    <p class="card-text">${obj.message}</p>
+    
+  </div>
+</div>`
+      
+      li1.style.listStyle = "none";
+      li1.style.width = "fit-content";
+      li1.style.backgroundColor = "white";
+      li1.style.padding = "2vw";
+      li1.style.marginRight = "5vw";
+      li1.style.marginBottom = "1vw";
+      span.appendChild(li1);
       div1.appendChild(span);
       div1.scrollTop = div1.scrollHeight;
     }else{
       
       const div1 = document.getElementById("div1");
+      
       const span = document.createElement("span");
       span.style.display = "flex";
       span.style.justifyContent = "right";
   
-      const li = document.createElement("li");
-      const a=document.createElement("a")
-      a.setAttribute("href",obj.message),
-      a.setAttribute("target","_blank")
-      const img=document.createElement("img")
-      img.setAttribute("src",obj.message)
-      img.setAttribute("style","width: 7vw")
-      a.appendChild(img)
-      li.appendChild(a);
-      li.style.listStyle = "none";
-      li.style.width = "fit-content";
-      li.style.backgroundColor = "white";
-      li.style.padding = "2vw";
-      li.style.marginRight = "5vw";
-      li.style.marginBottom = "1vw";
-      span.appendChild(li);
+      const li2 = document.createElement("li");
+      li2.innerHTML=`<div class="card" style="width: 18rem;">
+      <a href="${obj.message}" class="btn btn-primary">
+      <img src="${obj.message}" class="card-img-top" alt="...">
+      </a>
+      
+    </div>`
+      li2.style.listStyle = "none";
+      li2.style.width = "fit-content";
+      li2.style.backgroundColor = "white";
+      li2.style.padding = "2vw";
+      li2.style.marginRight = "5vw";
+      li2.style.marginBottom = "1vw";
+      span.appendChild(li2);
       div1.appendChild(span);
       div1.scrollTop = div1.scrollHeight;
     }
@@ -228,16 +233,29 @@ async function showmessageonscreen(obj) {
       span.style.display = "flex";
       span.style.justifyContent = "left";
   
-      const li = document.createElement("li");
+      const li3 = document.createElement("li");
+      li3.innerHTML=`<div class="card" style="width:18rem">
+  <div class="card-body" >
+    
+    <p class="card-text">${obj.message}</p>
+   
+  </div>
+  <div class="card-body">
+   
+    <p class="card-text">sender</p>
+    <h5 class="card-title">${obj.name}</h5>
+  </div>
   
-      li.append(document.createTextNode(obj.message + " => by  " + obj.name));
-      li.style.listStyle = "none";
-      li.style.width = "fit-content";
-      li.style.backgroundColor = "violet";
-      li.style.padding = "2vw";
-      li.style.marginLeft = "5vw";
-      li.style.marginBottom = "1vw";
-      span.appendChild(li);
+</div>`
+      
+     // li3.append(document.createTextNode(obj.message + " => by  " + obj.name));
+      li3.style.listStyle = "none";
+      li3.style.width = "fit-content";
+      li3.style.backgroundColor = "violet";
+      li3.style.padding = "2vw";
+      li3.style.marginLeft = "5vw";
+      li3.style.marginBottom = "1vw";
+      span.appendChild(li3);
       div2.appendChild(span);
       div2.scrollTop = div2.scrollHeight;
     }else{
@@ -247,22 +265,24 @@ async function showmessageonscreen(obj) {
       span.style.display = "flex";
       span.style.justifyContent = "left";
   
-      const li = document.createElement("li");
-      const a=document.createElement("a")
-      a.setAttribute("href",obj.message),
-      a.setAttribute("target","_blank")
-      const img=document.createElement("img")
-      img.setAttribute("src",obj.message)
-      img.setAttribute("style","width: 7vw")
-      a.appendChild(img)
-      li.appendChild(a);
-      li.style.listStyle = "none";
-      li.style.width = "fit-content";
-      li.style.backgroundColor = "violet";
-      li.style.padding = "2vw";
-      li.style.marginLeft = "5vw";
-      li.style.marginBottom = "1vw";
-      span.appendChild(li);
+      const li4 = document.createElement("li");
+      li4.innerHTML=`<div class="card" style="width: 18rem;">
+      <a href="${obj.message}" class="btn btn-primary">
+      <img src="${obj.message}" class="card-img-top" alt="...">
+      </a>
+      <div class="card-body">
+   
+    <p class="card-text">sender</p>
+    <h5 class="card-title">${obj.name}</h5>
+  </div>
+    </div>`
+      li4.style.listStyle = "none";
+      li4.style.width = "fit-content";
+      li4.style.backgroundColor = "violet";
+      li4.style.padding = "2vw";
+      li4.style.marginLeft = "5vw";
+      li4.style.marginBottom = "1vw";
+      span.appendChild(li4);
       div2.appendChild(span);
       div2.scrollTop = div2.scrollHeight;
     }
