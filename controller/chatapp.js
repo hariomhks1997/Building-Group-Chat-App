@@ -14,13 +14,15 @@ exports.message=async (req,res,)=>{
     const user=req.user
     const message=req.body.message;
     const GroupId=req.body.GroupId;
+    const date=req.body.date;
    
    
    try{
     const data=await user.createMessage({
         name:user.name,
         message:message,
-        GroupId:GroupId
+        GroupId:GroupId,
+        date:date
        })
        res.status(201).json({message:"message send sucessfully",data:data})
    }catch(err){
@@ -55,6 +57,7 @@ exports.commonmessage=async (req,res,)=>{
     const user=req.user
     const message=req.body.message;
     const GroupId=req.body.GroupId;
+    const date=req.body.date;
    
    
    
@@ -62,7 +65,8 @@ exports.commonmessage=async (req,res,)=>{
     const data=await user.createCommonmessage({
         name:user.name,
         message:message,
-        GroupId:GroupId
+        GroupId:GroupId,
+        date:date
        
        })
        res.status(201).json({message:"message send sucessfully",data:data})
@@ -189,6 +193,7 @@ exports.saveChatImages = async (request, response, next) => {
         const user = request.user;
         const image = request.file;
         const { GroupId } = request.body;
+        const { date } = request.body;
         const filename = `chat-images/group${GroupId}/user${user.id}/${Date.now()}_${image.originalname}`;
         const imageUrl = await awsservices.uploadToS3(image.buffer, filename)
         console.log("4",imageUrl)
@@ -198,14 +203,16 @@ exports.saveChatImages = async (request, response, next) => {
                
                 GroupId:GroupId,
                 message: imageUrl,
-                isImage: true
+                isImage: true,
+                date:date
             })
         } else {
             await user.createMessage({
                 name:user.name,
         message:imageUrl,
         GroupId:GroupId,
-        isImage: true
+        isImage: true,
+        date:date
 
 
             })

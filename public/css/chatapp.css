@@ -12,15 +12,9 @@
     display: flex;
     justify-content: center;
     margin-top: 1vw;
-    background-color: blue;
+    background-color:bisque;
     padding: 1vw;
 }
 #input1{
    width: 40vw;
-}
-#button1{
-    background-color: lightcyan;
-    padding: 1vw;
-font-weight: bold;
-
 }

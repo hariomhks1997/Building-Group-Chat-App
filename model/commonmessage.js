@@ -13,6 +13,7 @@ const commonmessage = sequelize.define('commonmessage', {
     type : Sequelize.BOOLEAN , 
   defaultValue : false
 },
+date: Sequelize.STRING,
   name:Sequelize.STRING,
 message:Sequelize.STRING,
 GroupId:Sequelize.INTEGER

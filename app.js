@@ -10,7 +10,8 @@ const signup = require('./model/signup')
 const Group = require("./model/group");
 const GroupMember = require('./model/group-members');
 const common=require("./model/commonmessage")
-
+const cronService = require('./services/cron');
+cronService.job.start();
 
 const signuproutes = require("./routes/signup")
 const signinroutes=require("./routes/signin")

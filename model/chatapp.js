@@ -13,6 +13,7 @@ const chatmessage = sequelize.define('message', {
     type : Sequelize.BOOLEAN , 
   defaultValue : false
 },
+date:Sequelize.STRING,
   name:Sequelize.STRING,
 message:Sequelize.STRING,
 GroupId:Sequelize.INTEGER

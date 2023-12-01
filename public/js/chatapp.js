@@ -4,6 +4,9 @@ socket.on("message",(message)=>{
 showcommonmessage() 
 showgroups()
 })
+const tenDaysAgo = new Date().getDate();
+console.log(tenDaysAgo)
+
 const flexSwitch=document.getElementById("flexSwitch")
 const flexInput=document.getElementById("input1")
 const flexLabel=document.getElementById("flexLabel")
@@ -46,8 +49,8 @@ async function showmessage(event) {
   event.preventDefault();
   const message = document.getElementById("input1");
   const groupid = document.getElementById("groupchanger").value;
-  console.log(groupid)
-  console.log(message);
+  const date=new Date().toString()
+ 
 
   try {
     if (groupid == 0) {
@@ -57,7 +60,8 @@ async function showmessage(event) {
         `common/message`,
         {
           message: message.value,
-          GroupId: groupid
+          GroupId: groupid,
+          date:date
         },
         { headers: { Authorization: token } }
       );
@@ -68,6 +72,7 @@ async function showmessage(event) {
                     const formData = new FormData();
                     formData.append('image', file);
                     formData.append('GroupId',groupid)
+                    formData.append('date',date)
                     const imageResponse = await axios.post('post-image',formData, { headers: { Authorization: token }})
                 }else{
                     alert('Please select a valid image file.');
@@ -80,7 +85,8 @@ async function showmessage(event) {
           `message`,
           {
             message: message.value,
-            GroupId: groupid
+            GroupId: groupid,
+            date:date
           },
           { headers: { Authorization: token } }
         );
@@ -90,6 +96,7 @@ async function showmessage(event) {
             const formData = new FormData();
             formData.append('image', file);
             formData.append('GroupId',groupid)
+            formData.append('date',date)
             const imageResponse = await axios.post('post-image',formData, { headers: { Authorization: token }})
         }else{
             alert('Please select a valid image file.');
@@ -105,7 +112,7 @@ async function showmessage(event) {
   }
 }
 window.addEventListener("DOMContentLoaded", async function () {
-  document.getElementById("groupname").innerHTML = "Commom-Group-Chat"
+  document.getElementById("groupname").innerHTML = "Common-Group-Chat"
   showcommongroup()
   showcreatedgroup()
   //ShowGroup();
@@ -558,7 +565,7 @@ async function showcreatedgroup() {
     const groupsResponse = await axios(`get-mygroups`, { headers: { Authorization: token } });
 
     const { groups } = groupsResponse.data;
-    console.log(groups)
+   
     createdgroup = groups
     groups.forEach((ele) => {
       const existingindex = created.findIndex((it) => it.id == ele.id)
@@ -648,7 +655,7 @@ async function showcreatedgroup() {
 
           }
 
-          document.getElementById("groupname").innerHTML = `${ele.name}-Chat`
+          document.getElementById("groupname").innerHTML = `${ele.name}-Group-Chat`
           document.getElementById("groupchanger").value = ele.id
           // window.location.href=`/chatapp?GroupId=${ele.id}`
           document.getElementById("div1").innerHTML = ""
@@ -687,7 +694,7 @@ async function showcommongroup() {
     event.preventDefault()
     document.getElementById("deletegroup").innerHTML=""
     document.getElementById("editgroup").innerHTML = ""
-    document.getElementById("groupname").innerHTML = "Commom-Group-Chat"
+    document.getElementById("groupname").innerHTML = "Common-Group-Chat"
     //window.location.href=`/chatapp`
     document.getElementById("div1").innerHTML = ""
     document.getElementById("groupchanger").value = Number(0)
