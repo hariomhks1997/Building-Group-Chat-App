@@ -6,7 +6,7 @@ const chatmessage = require("../model/chatapp")
 const ArchivedChatcommon = require('../model/archeived-chat-common');
 const ArchivedChatgroup = require('../model/archeived-chat-group');
 exports.job = new CronJob(
-    '0 0 * * *', 
+    '* * * * *', 
     function () {
        
         archiveOldRecordscommon();
@@ -26,13 +26,13 @@ async function archiveOldRecordscommon() {
       // Find records to archive
       const recordsToArchive = await common.findAll({
         where: {
-          date: {
-            [Op.lt]: tenDaysAgo.toString(),
+          createdAt: {
+            [Op.lt]: tenDaysAgo
           },
         },
       });
-  
-      // Archive records
+      
+      //Archive records
       await Promise.all(
         recordsToArchive.map(async (record) => {
           await ArchivedChatcommon.create({
@@ -59,8 +59,8 @@ async function archiveOldRecordscommon() {
       // Find records to archive
       const recordsToArchive = await chatmessage.findAll({
         where: {
-          date: {
-            [Op.lt]: tenDaysAgo.toString(),
+          createdAt: {
+            [Op.lt]: tenDaysAgo
           },
         },
       });
